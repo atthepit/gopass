@@ -11,8 +11,3 @@ func Generate_random_password(length int) string {
 	pass := base64.StdEncoding.EncodeToString(b)
 	return pass[0:length]
 }
-
-func Generate_strong_random_password() string {
-	pass_length := 24
-	return Generate_random_password(pass_length)
-}
