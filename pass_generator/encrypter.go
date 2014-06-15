@@ -10,7 +10,7 @@ import (
 const salt_size int = 16
 const key_len int = 32
 
-var Iter int = 1650
+var Iter int = 20000
 
 func generate_salt() []byte {
 	salt := make([]byte, salt_size)
