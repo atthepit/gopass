@@ -4,12 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"code.google.com/p/gopass"
-
 	"fmt"
 	"github.com/atotto/clipboard"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/mesmerismo/gopass/pass_generator"
-	_ "github.com/ziutek/mymysql/godrv"
 	"os"
 )
 
@@ -23,6 +20,14 @@ func create_user(user_name string) {
 	var master_password string
 	var err error
 	is_secure := false
+
+	num, _, _ := pass_generator.Get_user(user_name)
+	if num == 1 {
+		fmt.Println("Hey, " + user_name + "! I already know you!")
+		fmt.Println("Check everything I know from you with:")
+		fmt.Println("gopass -l " + user_name)
+		os.Exit(0)
+	}
 
 	fmt.Println("Nice to meet you, " + user_name + "!")
 	for !is_secure {
@@ -83,6 +88,14 @@ func create_site(site, user string) {
 
 	master := check_user(user)
 
+	pass := pass_generator.Get_password(site, user)
+	if pass != nil {
+		fmt.Println("You already have a password for " + site)
+		fmt.Println("If you want to reset the password execute:")
+		fmt.Println("gopass -r " + site + " -u " + user)
+		os.Exit(0)
+	}
+
 	fmt.Println("Creating password......")
 	var new_pass string
 	is_secure := false
@@ -105,6 +118,10 @@ func create_site(site, user string) {
 func get_site_password(master []byte, site, user string) []byte {
 
 	pass := pass_generator.Get_password(site, user)
+	if pass == nil {
+		fmt.Println("Sorry but I don't know any password for " + site)
+		os.Exit(0)
+	}
 	decrypted_pass := pass_generator.Decrypt(pass, master)
 
 	return decrypted_pass
@@ -138,6 +155,12 @@ func list_sites(user string) {
 
 func delete_site(site, user string) {
 	check_user(user)
+
+	pass := pass_generator.Get_password(site, user)
+	if pass == nil {
+		fmt.Println("Sorry but I don't know any password for " + site)
+		os.Exit(0)
+	}
 
 	fmt.Println("Are you sure you want to delete your " + site + " password? (Y/n)")
 	fmt.Println("(you should change the password in that site first!)")

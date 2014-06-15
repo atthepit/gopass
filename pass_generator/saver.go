@@ -103,15 +103,19 @@ func Get_password(site_name, user_name string) []byte {
 	check_err(err)
 	defer db.Close()
 
-	rows, err := db.Query("SELECT password FROM sites WHERE sites.user LIKE ? AND sites.name LIKE ?;", user_name, site_name)
+	rows, err := db.Query("SELECT count(*), password FROM sites WHERE sites.user LIKE ? AND sites.name LIKE ?;", user_name, site_name)
 	check_err(err)
 
 	rows.Next()
 	var pass []byte
-	err = rows.Scan(&pass)
+	var num int
+	err = rows.Scan(&num, &pass)
 	check_err(err)
 	rows.Close()
 
+	if num <= 0 {
+		return nil
+	}
 	return pass
 }
 
