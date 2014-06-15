@@ -12,12 +12,6 @@ const key_len int = 32
 
 var Iter int = 1650
 
-func check_err(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func generate_salt() []byte {
 	salt := make([]byte, salt_size)
 	rand.Read(salt)

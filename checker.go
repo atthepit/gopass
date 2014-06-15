@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+func check_err(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 const minimun_pass_length int = 8
 
 func matches(exp, pass string) []string {
